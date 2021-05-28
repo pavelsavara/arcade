@@ -64,17 +64,13 @@ namespace Microsoft.DotNet.RemoteExecutor
             }
         }
 
+        private static bool IsMonoRuntime => Type.GetType("Mono.RuntimeStructs") != null;
         private static bool IsNetCore() =>
             Environment.Version.Major >= 5 || RuntimeInformation.FrameworkDescription.StartsWith(".NET Core", StringComparison.OrdinalIgnoreCase);
 
         /// <summary>Returns true if the RemoteExecutor works on the current platform, otherwise false.</summary>
         public static bool IsSupported { get; } =
-            !RuntimeInformation.IsOSPlatform(OSPlatform.Create("IOS")) &&
-            !RuntimeInformation.IsOSPlatform(OSPlatform.Create("ANDROID")) &&
-            !RuntimeInformation.IsOSPlatform(OSPlatform.Create("TVOS")) &&
-            !RuntimeInformation.IsOSPlatform(OSPlatform.Create("MACCATALYST")) &&
-            !RuntimeInformation.IsOSPlatform(OSPlatform.Create("WATCHOS")) &&
-            !RuntimeInformation.IsOSPlatform(OSPlatform.Create("BROWSER")) &&
+            !IsMonoRuntime &&
             // The current RemoteExecutor design is not compatible with single file
             !string.IsNullOrEmpty(typeof(RemoteExecutor).Assembly.Location);
 
